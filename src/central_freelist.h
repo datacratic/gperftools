@@ -79,6 +79,9 @@ class CentralFreeList {
   // page full of 5-byte objects would have 2 bytes memory overhead).
   size_t OverheadBytes();
 
+  // Returns the lock associated with this free list.
+  SpinLock* lock() { return &lock_; }
+
  private:
   // TransferCache is used to cache transfers of
   // sizemap.num_objects_to_move(size_class) back and forth between

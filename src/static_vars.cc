@@ -37,6 +37,9 @@
 #include "common.h"
 #include "sampler.h"           // for Sampler
 
+// TODO(rattab): Should disable this when a pthread library is not available.
+#include <pthread.h>           // pthread_atfork
+
 namespace tcmalloc {
 
 SpinLock Static::pageheap_lock_(SpinLock::LINKER_INITIALIZED);
@@ -48,6 +51,18 @@ Span Static::sampled_objects_;
 PageHeapAllocator<StackTraceTable::Bucket> Static::bucket_allocator_;
 StackTrace* Static::growth_stacks_ = NULL;
 PageHeap* Static::pageheap_ = NULL;
+
+static void AtForkBefore() {
+    Static::pageheap_lock()->Lock();
+    for (int i = 0; i < kNumClasses; ++i)
+        Static::central_cache()[i].lock()->Lock();
+}
+
+static void AtForkAfter() {
+    for (int i = 0; i < kNumClasses; ++i)
+        Static::central_cache()[i].lock()->Unlock();
+    Static::pageheap_lock()->Unlock();
+}
 
 void Static::InitStaticVars() {
   sizemap_.Init();
@@ -68,6 +83,12 @@ void Static::InitStaticVars() {
   pageheap_ = new (MetaDataAlloc(sizeof(PageHeap))) PageHeap;
   DLL_Init(&sampled_objects_);
   Sampler::InitStatics();
+
+  // Makes tcmalloc resistant to forking by grabbing all the relevant locks
+  // before forking and releasing them after forking. This should avoid any
+  // deadlocks when allocating when the forked thread.
+  // TODO(rattab): Should disable this when a pthread library is not available.
+  pthread_atfork(AtForkBefore, AtForkAfter, AtForkAfter);
 }
 
 }  // namespace tcmalloc
