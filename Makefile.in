@@ -397,7 +397,7 @@ libstacktrace_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 @WITH_STACK_TRACE_TRUE@am_libstacktrace_la_rpath =
 libsysinfo_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-am_libsysinfo_la_OBJECTS = sysinfo.lo $(am__objects_1)
+am_libsysinfo_la_OBJECTS = sysinfo.lo apple_scanf.lo $(am__objects_1)
 libsysinfo_la_OBJECTS = $(am_libsysinfo_la_OBJECTS)
 @WITH_HEAP_PROFILER_OR_CHECKER_TRUE@libtcmalloc_la_DEPENDENCIES =  \
 @WITH_HEAP_PROFILER_OR_CHECKER_TRUE@	libtcmalloc_internal.la \
@@ -2050,6 +2050,7 @@ SYSINFO_INCLUDES = src/base/sysinfo.h \
                    src/base/basictypes.h
 
 libsysinfo_la_SOURCES = src/base/sysinfo.cc \
+                        src/third_party/apple_scanf.c \
                         $(SYSINFO_INCLUDES)
 
 libsysinfo_la_LIBADD = $(NANOSLEEP_LIBS) $(am__append_9)
@@ -3413,6 +3414,13 @@ sysinfo.lo: src/base/sysinfo.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/base/sysinfo.cc' object='sysinfo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sysinfo.lo `test -f 'src/base/sysinfo.cc' || echo '$(srcdir)/'`src/base/sysinfo.cc
+
+apple_scanf.lo: src/third_party/apple_scanf.c
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT apple_scanf.lo -MD -MP -MF $(DEPDIR)/apple_scanf.Tpo -c -o apple_scanf.lo `test -f 'src/third_party/apple_scanf.c' || echo '$(srcdir)/'`src/third_party/apple_scanf.c
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/apple_scanf.Tpo $(DEPDIR)/apple_scanf.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/third_party/apple_scanf.c' object='apple_scanf.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o apple_scanf.lo `test -f 'src/third_party/apple_scanf.c' || echo '$(srcdir)/'`src/third_party/apple_scanf.c
 
 libtcmalloc_la-tcmalloc.lo: src/tcmalloc.cc
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtcmalloc_la_CXXFLAGS) $(CXXFLAGS) -MT libtcmalloc_la-tcmalloc.lo -MD -MP -MF $(DEPDIR)/libtcmalloc_la-tcmalloc.Tpo -c -o libtcmalloc_la-tcmalloc.lo `test -f 'src/tcmalloc.cc' || echo '$(srcdir)/'`src/tcmalloc.cc

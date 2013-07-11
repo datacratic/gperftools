@@ -191,6 +191,7 @@ SYSINFO_INCLUDES = src/base/sysinfo.h \
                    src/base/basictypes.h
 noinst_LTLIBRARIES += libsysinfo.la
 libsysinfo_la_SOURCES = src/base/sysinfo.cc \
+                        src/third_party/apple_scanf.c \
                         $(SYSINFO_INCLUDES)
 libsysinfo_la_LIBADD = $(NANOSLEEP_LIBS)
 

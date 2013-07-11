@@ -103,6 +103,9 @@
 # define safeclose(fd)  close(fd)
 #endif
 
+// glibc calls malloc from sscanf, which is bad.  Use apple's version, instead.
+extern "C" int apple_sscanf(const char *ibuf, const char *fmt, ...);
+
 // ----------------------------------------------------------------------
 // GetenvBeforeMain()
 // GetUniquePathFromEnv()
@@ -712,13 +715,15 @@ bool ProcMapsIterator::NextExt(uint64 *start, uint64 *end, char **flags,
     unsigned filename_offset = 0;
 #if defined(__linux__)
     // for now, assume all linuxes have the same format
-    if (sscanf(stext_, "%"SCNx64"-%"SCNx64" %4s %"SCNx64" %x:%x %"SCNd64" %n",
-               start ? start : &tmpstart,
-               end ? end : &tmpend,
-               flags_,
-               offset ? offset : &tmpoffset,
-               &major, &minor,
-               inode ? inode : &tmpinode, &filename_offset) != 7) continue;
+    if (apple_sscanf(stext_,
+                     "%"SCNx64"-%"SCNx64" %4s %"SCNx64" %x:%x %"SCNd64" %n",
+                     start ? start : &tmpstart,
+                     end ? end : &tmpend,
+                     flags_,
+                     offset ? offset : &tmpoffset,
+                     &major, &minor,
+                     inode ? inode : &tmpinode, &filename_offset) != 7)
+       continue;
 #elif defined(__CYGWIN__) || defined(__CYGWIN32__)
     // cygwin is like linux, except the third field is the "entry point"
     // rather than the offset (see format_process_maps at
@@ -786,11 +791,11 @@ bool ProcMapsIterator::NextExt(uint64 *start, uint64 *end, char **flags,
             uint64 tmp_anon_mapping;
             uint64 tmp_anon_pages;
 
-            sscanf(backing_ptr+1, "F %"SCNx64" %"SCNd64") (A %"SCNx64" %"SCNd64")",
-                   file_mapping ? file_mapping : &tmp_file_mapping,
-                   file_pages ? file_pages : &tmp_file_pages,
-                   anon_mapping ? anon_mapping : &tmp_anon_mapping,
-                   anon_pages ? anon_pages : &tmp_anon_pages);
+            apple_sscanf(backing_ptr+1, "F %"SCNx64" %"SCNd64") (A %"SCNx64" %"SCNd64")",
+                         file_mapping ? file_mapping : &tmp_file_mapping,
+                         file_pages ? file_pages : &tmp_file_pages,
+                         anon_mapping ? anon_mapping : &tmp_anon_mapping,
+                         anon_pages ? anon_pages : &tmp_anon_pages);
             // null terminate the file name (there is a space
             // before the first (.
             backing_ptr[-1] = 0;
